@@ -1,11 +1,21 @@
 " Vim autoload file for omnisnippet
 "
-"     Plugin :  omnisnippet.vim
-"     Author :  Jan Tomek <rpi3.tomek@protonmail.com>
+"  Plugin:   omnisnippet.vim
+"  Author:   Jan Tomek <rpi3.tomek@protonmail.com>
+"  Date:     25.04.2020
+"
+"              ___                  _ ____        _                  _
+"          / _ \ _ __ ___  _ __ (_) ___| _ __ (_)_ __  _ __   ___| |_
+"         | | | | '_ ` _ \| '_ \| \___ \| '_ \| | '_ \| '_ \ / _ \ __|
+"         | |_| | | | | | | | | | |___) | | | | | |_) | |_) |  __/ |_
+"          \___/|_| |_| |_|_| |_|_|____/|_| |_|_| .__/| .__/ \___|\__|
+"                                               |_|   |_|
+"
 "
 " -----------------------------------------------------------------
-" ===< set filetype-dependent variables >================================== {{{1
+" set filetype-dependent variables ======================================== {{{1
 " snippets location
+" TODO: change all relevant variables from script to buffer local
 let s:omnisnippet_snippets_location = g:omnisnippet_snippets_location . "/" . &ft
 let s:omnisnippet_snippets_extension = expand("%:e")
 
@@ -78,6 +88,12 @@ function! omnisnippet#Write(mode ) range " ================================ {{{1
     echom '[+] ' . l:snippet_name . ' written.'
 
     execute ":cd " . l:cwd
+endfunction
+
+function! omnisnippet#Preview() " ========================================= {{{1
+    " TODO: add a snipppets preview and edit, possibly using 'previewwindow'
+    "       or NERDTree.. NERDTree not optimal - adds dependency
+    echom '[i] Placeholder for preview function'
 endfunction
 
 function! omnisnippet#GetInput() " ======================================== {{{1
