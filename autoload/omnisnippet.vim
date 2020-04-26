@@ -16,23 +16,24 @@
 "########################################################################
 
 " load autoload script only once ======================================== {{{1
-if exists("b:omnisnippet_autoload_loaded")
+if exists("g:omnisnippet_autoload_loaded")
   finish
 endif
 
 " function! omnisnippet#Insert(mode) range ============================== {{{1
 function! omnisnippet#Insert(mode) range
+  execute "let b:omnisnippet_snippet_ftlocation = g:omnisnippet_snippets_" . &filetype
   " check if any snippets are stored for the current filetype
   if !isdirectory(b:omnisnippet_snippet_ftlocation)
-    echom '[-] OmniSnippet: no snippets directory for ' . b:omnisnippet_snippet_filetype . ' filetype.'
+    echom '[-] OmniSnippet: no snippets directory for ' . &filetype . ' filetype.'
     return
   elseif len(globpath(b:omnisnippet_snippet_ftlocation, "**/*.*", 0, 1)) == 0
-    echom '[-] OmniSnippet: no snippets stored for ' . b:omnisnippet_snippet_filetype . ' filetype.'
+    echom '[-] OmniSnippet: no snippets stored for ' . &filetype . ' filetype.'
     return
   endif
 
   silent! call omnisnippet#StoreDefaults()
-  setlocal completefunc = omnisnippet#Complete
+  setlocal completefunc=omnisnippet#Complete
   let &completeopt = 'menuone,preview'
 
   inoremap <buffer> <silent> <expr> <cr>     omnisnippet#MapEnter()
@@ -60,10 +61,10 @@ endfunction
 " function! omnisnippet#GetSnippets() =================================== {{{1
 function! omnisnippet#GetSnippets()
   let l:snippets = []
-  silent! call extend(l:snippets, globpath(b:omnisnippet_snippets_ftlocation, "*.*", 0, 1))
-  silent! call extend(l:snippets, globpath(b:omnisnippet_snippets_ftlocation, "*/*.*", 0, 1))
-  silent! call extend(l:snippets, globpath(b:omnisnippet_snippets_ftlocation, "*/**/*.*", 0, 1))
-  silent! call map(l:snippets, "substitute(v:val, \"" . escape(b:omnisnippet_snippets_ftlocation, '.*()|') . "/\", \"\", \"\")")
+  silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*.*", 0, 1))
+  silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*/*.*", 0, 1))
+  silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*/**/*.*", 0, 1))
+  silent! call map(l:snippets, "substitute(v:val, \"" . escape(b:omnisnippet_snippet_ftlocation, '.*()|') . "/\", \"\", \"\")")
   return l:snippets
 endfunction
 
@@ -77,7 +78,7 @@ function! omnisnippet#InsertSnippet()
     normal! ddk
   endif
   " get the filename from current line and set path
-  let l:filename = b:omnisnippet_snippets_ftlocation . "/" . getline(".")
+  let l:filename = b:omnisnippet_snippet_ftlocation . "/" . getline(".")
   " check if the file is readable and insert it
   if filereadable(l:filename)
     silent! execute "read " . l:filename
@@ -93,6 +94,8 @@ endfunction
 
 " function! omnisnippet#Store(mode) range =============================== {{{1
 function! omnisnippet#Store(mode) range
+  " set filetype specific location for snippets to be read from
+  execute "let b:omnisnippet_snippet_ftlocation = g:omnisnippet_snippets_" . &filetype
   " store the whole file or just selected lines as a snippet
   " check mode
   if a:mode ==# "n"  " normal mode
@@ -107,17 +110,17 @@ function! omnisnippet#Store(mode) range
   let l:snippet = split(substitute(join(l:snippet, "\r"), "\v(^(\r(\r|\s)*\r)|(\r(\r|\s)*\r\s*$)", "", ""), "\r")
   " undo indent of the snippet
   let l:indent = match(l:snippet[0], "\\S")
-  call map(l:snippet, 'v:val[:' . l:indent . ' =~# \\s* ? strpart(v:val, ' . l:indent . ' : v:val')
+  call map(l:snippet, 'v:val[:' . l:indent . '] =~# "\\s*" ? strpart(v:val, ' . l:indent . ') : v:val')
   " store current working directory
   let l:cwd = getcwd()
   " check if the snippets directory exists for current filetype, creates it if
   " not
-  if !isdirectory(b:omnisnippet_snippets_ftlocation)
-    silent! call mkdir(b:omnisnippet_snippets_ftlocation, "p")
-    echom "[+] OmniSnippet: created the Snippets directory (" . b:omnisnippet_snippets_ftlocation
+  if !isdirectory(b:omnisnippet_snippet_ftlocation)
+    silent! call mkdir(b:omnisnippet_snippet_ftlocation, "p")
+    echom "[+] OmniSnippet: created the Snippets directory  " . b:omnisnippet_snippet_ftlocation
   endif
   " change path to the snippets directory for autocompletion purposes
-  silent! execute ":cd " . b:omnisnippet_snippets_ftlocation
+  silent! execute ":cd " . b:omnisnippet_snippet_ftlocation
   " get snippet name
   let l:snippet_name = omnisnippet#GetUserInput('Input Snippet Name: ', '', 'file')
   if l:snippet_name ==# "" | return | endif
@@ -130,7 +133,8 @@ function! omnisnippet#Store(mode) range
     silent! call mkdir(fnamemodify(l:snippet_name, ":h"), "p")
   endif
   " write the file and wait for finish
-  silent! call writefile(l:snippet, l;snippet_name, "s")
+  echo l:snippet
+  silent! call writefile(l:snippet, l:snippet_name, "s")
   " change the path back
   silent! execute ":cd " . l:cwd
 endfunction
@@ -165,7 +169,8 @@ function! omnisnippet#RestoreDefaults()
   endif
   if exists("b:omnisnippet_mappings_backup")
     call omnisnippet#RestoreMappings(b:omnisnippet_mappings_backup)
-  echom '[+] OmniSnippet: defaults backed up.'
+  endif
+  echom '[+] OmniSnippet: defaults restored'
 endfunction
 
 " function! omnisnippet#SaveMappinngs(keys, mode, global) abort ========= {{{1
@@ -257,6 +262,6 @@ endfunction
 
 " }}}
 
-let b:omnisnippet_autoload_loaded = 1
+let g:omnisnippet_autoload_loaded = 1
 finish
 " vim: set fdm=marker ft=vim
