@@ -14,13 +14,19 @@
 "
 " TODO:  1) Snippets preview: tags file? ->
 "           snippet_name{TAB}filename{TAB}location
+"           possible solution: when storing add a new tag to
+"           filetype.tags, then preview tags in quickfix window and map
+"           enter up/down movement (ctrl-n/ctrl-p) to automatically view
+"           the snippet in preview window
 "        2) tests of all functions and externalised global settings
 "        3) print messages only in verbose mode
+"        4) maybe easier editing of the snippet? overwrite values to be
+"           set as {{value}} and then using tab or ctrl-n ctrl-p rotate
+"           over them to overwrite them immediately?
+"        5) buffer-local variable of snippet path - what if filetype
+"           changed in the same buffer? test it
 "
-" NOTES: 1) buffer-local variable of snippet path - what if filetype changed
-"           in the same buffer?
-"
-"########################################################################
+"#######################################################################"
 
 " load plugin only once ================================================= {{{1
 if exists("g:omnisnippet_plugin_loaded")
