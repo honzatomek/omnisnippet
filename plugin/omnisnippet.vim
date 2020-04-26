@@ -25,6 +25,9 @@
 "           over them to overwrite them immediately?
 "        5) buffer-local variable of snippet path - what if filetype
 "           changed in the same buffer? test it
+"        6) fix arrows movement in completion list
+"           maybe map left-right arrows to complete the selected snippet
+"           and preview it in preview window?
 "
 "#######################################################################"
 

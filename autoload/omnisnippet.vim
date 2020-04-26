@@ -32,14 +32,21 @@ function! omnisnippet#Insert(mode) range
     return
   endif
 
-  silent! call omnisnippet#StoreDefaults()
+  silent! call omnisnippet#SetDefaults(['<cr>', '<kEnter>', '<c-y>', '<c-x>'])
+
   setlocal completefunc=omnisnippet#Complete
   let &completeopt = 'menuone,preview'
 
   inoremap <buffer> <silent> <expr> <cr>     omnisnippet#MapEnter()
   inoremap <buffer> <silent> <expr> <kEnter> omnisnippet#MapEnter()
   inoremap <buffer> <silent> <expr> <c-y>    omnisnippet#MapCtrlY()
-  inoremap <buffer> <silent> <expr> <esc>    omnisnippet#MapEsc()
+  " inoremap <buffer> <silent> <expr> <esc>    omnisnippet#MapEsc()
+  inoremap <buffer> <silent> <expr> <c-x>    omnisnippet#MapCtrlX()
+
+  " let l:bufwinnr = bufwinnr("%")
+  " silent! execute "vertical botright copen 60"
+  " silent! execute "cclose"
+  " silent! execute l:bufwinnr . "wincmd w"
 
   normal! o
   normal! k
@@ -53,6 +60,7 @@ function! omnisnippet#Complete(findstart, base)
   if a:findstart
     return 1
   else
+    echom '[i] OmniSnippet: omnisnippet#Complete() called'
     let l:items = omnisnippet#GetSnippets()
     return l:items
   endif
@@ -64,7 +72,12 @@ function! omnisnippet#GetSnippets()
   silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*.*", 0, 1))
   silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*/*.*", 0, 1))
   silent! call extend(l:snippets, globpath(b:omnisnippet_snippet_ftlocation, "*/**/*.*", 0, 1))
-  silent! call map(l:snippets, "substitute(v:val, \"" . escape(b:omnisnippet_snippet_ftlocation, '.*()|') . "/\", \"\", \"\")")
+	" word		the text that will be inserted, mandatory
+	" info		more information about the item, can be displayed in a
+			" preview window
+  silent! call map(l:snippets, "{\"word\": substitute(v:val, \"" . escape(b:omnisnippet_snippet_ftlocation, '.*()|') . "/\", \"\", \"\"), \"menu\": join(readfile(v:val, '', 1), \"\n\"),\"info\": join(readfile(v:val), \"\n\"),}")
+
+  " silent! call map(l:snippets, "substitute(v:val, \"" . escape(b:omnisnippet_snippet_ftlocation, '.*()|') . "/\", \"\", \"\")")
   return l:snippets
 endfunction
 
@@ -89,7 +102,8 @@ function! omnisnippet#InsertSnippet()
   " restore unnamed register
   let @@ = l:tmpUnnamedReg
   " restore backed-up defaults
-  silent! call omnisnippet#RestoreDefaults()
+"   silent! call omnisnippet#RestoreDefaults()
+  call omnisnippet#RestoreDefaults()
 endfunction
 
 " function! omnisnippet#Store(mode) range =============================== {{{1
@@ -147,29 +161,61 @@ function! omnisnippet#GetUserInput(prompt, default, completion)
     return l:retVal
 endfunction
 
-" function! omnisnippet#StoreDefaults() ================================= {{{1
-function! omnisnippet#StoreDefaults()
+" function! omnisnippet#SetDefaults(mappings) =========================== {{{1
+function! omnisnippet#SetDefaults(mappings)
   if !empty(&completefunc)
-    let b:omnisnippet_completefunc_backup = &completefunc
+    execute "let b:omnisnippet_completefunc_backup = '" . &completefunc . "'"
   endif
   if !empty(&completeopt)
-    let b:omnisnippet_completeopt_backup = &completeopt
+    execute "let b:omnisnippet_completeopt_backup = '" . &completeopt . "'"
   endif
-  let b:omnisnippet_mappings_backup = omnisnippet#SaveMappings(['<cr>', '<kenter>', '<c-y>', '<esc>'], 'i', 0)
+  let b:omnisnippet_mappings_backup = omnisnippet#SaveMappings(a:mappings, 'i', 0)
+
+  let g:omnisnippet_current_filetype = &filetype
+
+  augroup OmniSnippet_Preview
+    autocmd!
+"     autocmd BufWinEnter * if &previewwindow | echom '[i] OmniSnippet: Created Preview' | endif
+    autocmd BufWinEnter * if &previewwindow | setlocal nowrap nonumber nofoldenable | endif
+    autocmd BufWinEnter * if &previewwindow && exists("g:omnisnippet_current_filetype") | execute "setlocal filetype=" . g:omnisnippet_current_filetype | endif
+
+    autocmd BufWinEnter * if &previewwindow | execute ":wincmd L" | endif
+    autocmd BufWinEnter * if &previewwindow | execute ":vertical resize 60" | endif
+    autocmd BufWinEnter * if &previewwindow | execute "let g:omnisnippet_preview_bufwinnr = " . bufwinnr(bufnr("%")) | endif
+  augroup END
+
   echom '[+] OmniSnippet: defaults backed up.'
 endfunction
 
 " function! omnisnippet#RestoreDefaults() =============================== {{{1
 function! omnisnippet#RestoreDefaults()
   if exists("b:omnisnippet_completefunc_backup")
-    let &completefunc = b:omnisnippet_completefunc_backup
+    execute "setlocal completefunc=" . b:omnisnippet_completefunc_backup
+  else
+    execute "setlocal completefunc="
   endif
   if exists("b:omnisnippet_completeopt_backup")
-    let &completeopt = b:omnisnippet_completeopt_backup
+    execute "setlocal completeopt=" . b:omnisnippet_completeopt_backup
+"     let &completeopt = b:omnisnippet_completeopt_backup
+  else
+    execute "setlocal completeopt="
   endif
   if exists("b:omnisnippet_mappings_backup")
     call omnisnippet#RestoreMappings(b:omnisnippet_mappings_backup)
   endif
+
+  augroup OmniSnippet_Preview
+    autocmd!
+  augroup END
+
+  if exists("g:omnisnippet_preview_bufwinnr")
+    silent! execute g:omnisnippet_preview_bufwinnr . "close!"
+  endif
+
+  unlet g:omnisnippet_current_filetype
+
+"   silent! execute ":cclose"
+
   echom '[+] OmniSnippet: defaults restored'
 endfunction
 
@@ -252,9 +298,18 @@ function! omnisnippet#MapEnter()
 endfunction
 
 " function! omnisnippet#MapEsc() ======================================== {{{1
-function! omnisnippet#MapEsc() " ======================================== {{{1
+function! omnisnippet#MapEsc()
     if !pumvisible()
         return "\<ESC>"
+    else
+        return "\<ESC>:normal dd\<CR>:call omnisnippet#RestoreDefaults()\<CR>"
+    endif
+endfunction
+
+" function! omnisnippet#MapCtrlX() ====================================== {{{1
+function! omnisnippet#MapCtrlX()
+    if !pumvisible()
+        return "\<C-X>"
     else
         return "\<ESC>:normal dd\<CR>:call omnisnippet#RestoreDefaults()\<CR>"
     endif
