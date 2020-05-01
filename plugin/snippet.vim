@@ -56,10 +56,10 @@ function! s:Snippet_SetMapping(mode, name, function, keys)
   endif
 endfunction
 
-call <SID>Snippet_SetMapping('n', 'Snippet_InsertSnippet', 'snippet#Insert("n")', '<leader>oi')
-call <SID>Snippet_SetMapping('v', 'Snippet_InsertSnippet', 'snippet#Insert("v")', '<leader>oi')
-call <SID>Snippet_SetMapping('n', 'Snippet_StoreSnippet', 'snippet#Store("n")', '<leader>os')
-call <SID>Snippet_SetMapping('v', 'Snippet_StoreSnippet', 'snippet#Store("v")', '<leader>os')
+call <SID>Snippet_SetMapping('n', 'Snippet_InsertSnippetN', 'snippet#Insert("n")', '<leader>is')
+call <SID>Snippet_SetMapping('v', 'Snippet_InsertSnippetV', 'snippet#Insert("v")', '<leader>is')
+call <SID>Snippet_SetMapping('n', 'Snippet_StoreSnippetN', 'snippet#Store("n")', '<leader>ss')
+call <SID>Snippet_SetMapping('v', 'Snippet_StoreSnippetV', 'snippet#Store("v")', '<leader>ss')
 
 " }}}
 

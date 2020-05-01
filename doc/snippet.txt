@@ -54,24 +54,25 @@ overwritten for the buffer, where |vim-snippet| was called from.
 
 The basic mappings can be overwritten, see |snippet-setup|
 
-Normal mode~
-<leader>si  Show completion Popup Menu to select a Snippet and insert it in
-            current line
-<leader>ss  Store whole file as a snippet, select name and location.
+INSERT SNIPPET
 
-Visual mode~
-<leader>si  Show completion Popup Menu to select a Snippet and insert it in
-            current line
-<leader>ss  Store selected lines as a snippet, select name and location.
+mode   mapping     description~
+normal <leader>si  Show completion Popup Menu to select a Snippet and insert
+                   it in current line.
+visual <leader>si  Show completion Popup Menu to select a Snippet and replace
+                   the selection with it.
 
-Insert mode~
-            There are currently no mappings for insert mode predefined.
+normal <leader>ss  Store whole file as a snippet, select name and location.
+visual <leader>ss  Store selected lines as a snippet, select name and
+                   location.
+
+There are currently no mappings for insert mode predefined.
 
 ==============================================================================
 2. Installation                                  *snippet-installation*
 
 Using PATHOGEN~
-{Pathogen}  https://github.com/tpope/vim-pathogen 
+    https://github.com/tpope/vim-pathogen 
 
     cd ~/.vim/bundle
     git clone https://github.com/honzatomek/vim-snippet
