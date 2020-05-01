@@ -1,39 +1,89 @@
-*snippet.vim* Vim Plugin to store and insert Code and Text Snippets
-*snippet* *Snippet* *'snippet'* *'Snippet'* *tomek* *Tomek*
+*snippet.vim*             For Vim version 8.1         Last change: 2020 May 1
 =============================================================================
                                                                             ~
-       ee   e e  eeeeeee      eeeee eeeee e  eeeee eeeee eeee eeeee         ~
-       88   8 8  8  8  8      8   " 8   8 8  8   8 8   8 8      8           ~
-       88  e8 8e 8e 8  8 eeee 8eeee 8e  8 8e 8eee8 8eee8 8eee   8e          ~
-        8  8  88 88 8  8         88 88  8 88 88    88    88     88          ~
-        8ee8  88 88 8  8      8ee88 88  8 88 88    88    88ee   88          ~
+        ee   e e  eeeeeee      eeeee eeeee e  eeeee eeeee eeee eeeee        ~
+        88   8 8  8  8  8      8   " 8   8 8  8   8 8   8 8      8          ~
+        88  e8 8e 8e 8  8 eeee 8eeee 8e  8 8e 8eee8 8eee8 8eee   8e         ~
+         8  8  88 88 8  8         88 88  8 88 88    88    88     88         ~
+         8ee8  88 88 8  8      8ee88 88  8 88 88    88    88ee   88         ~
                                                                             ~
 
-  Plugin:  snippet.vim
-  Author:  Jan Tomek <rpi3.tomek@protonmail.com>
-  Date:    25.04.2020
-  Version: 0.1.0
+  Plugin:  snippet.vim~
+  Author:  Jan Tomek <rpi3.tomek@protonmail.com>~
+  Date:    25.04.2020~
+  Version: 0.1.0~
 
-  TODO:  1) Snippets preview: tags file? ->
-            snippet_name{TAB}filename{TAB}location
-            possible solution: when storing add a new tag to
-            filetype.tags, then preview tags in quickfix window and map
-            enter up/down movement (ctrl-n/ctrl-p) to automatically view
-            the snippet in preview window
-         2) tests of all functions and externalised global settings
-         3) print messages only in verbose mode
-         4) maybe easier editing of the snippet? overwrite values to be
-            set as {{value}} and then using tab or ctrl-n ctrl-p rotate
-            over them to overwrite them immediately?
-         5) buffer-local variable of snippet path - what if filetype
-            changed in the same buffer? test it
-         6) fix arrows movement in completion list
-            maybe map left-right arrows to complete the selected snippet
-            and preview it in preview window?
+  Note
+       1) Snippets preview:~
+                tags file? -> snippet_name<TAB>filename<TAB>location
+                possible solution: when storing add a new tag to
+                filetype.tags, then preview tags in quickfix window and map
+                enter <up>/<down> movement <c-n>/<c-p> to automatically view
+                the snippet in preview window
+       2) tests of all functions and externalised global settings~
+       3) print messages only in verbose mode~
+       4) snippet editing~
+                maybe easier editing of the snippet? overwrite values to be
+                set as `{{value}}` and then using tab or ctrl-n ctrl-p rotate
+                over them to overwrite them immediately?
+       5) buffer-local variable of snippet path~
+                what if filetype changed in the same buffer? `test it`
+       6) fix arrows movement in completion list~
+                maybe map <left>/<right> to complete the selected snippet
+                and preview it in preview window?
 
 ==============================================================================
+CONTENTS                                         *snippet* *vim-snippet*
+
+1.  Description                                  |snippet-description|
+2   Mappings                                     |snippet-mappings|
+3.  Installation                                 |snippet-installation|
+4.  Setup                                        |snippet-setup|
+5.  Usage                                        |snippet-usage|
+
+==============================================================================
+1. Description                                   *snippet-description*
+
+Vim Plugin to store and insert Code and Text Snippets in a separate
+directory structure based on filetype. Inserting works using
+'completefunc' and 'completeopts' variables, which are temporarily
+overwritten for the buffer, where |vim-snippet| was called from.
+
+==============================================================================
+1. Mappings                                      *snippet-mappings*
+
+The basic mappings can be overwritten, see |snippet-setup|
+
+Normal mode~
+<leader>si  Show completion Popup Menu to select a Snippet and insert it in
+            current line
+<leader>ss  Store whole file as a snippet, select name and location.
+
+Visual mode~
+<leader>si  Show completion Popup Menu to select a Snippet and insert it in
+            current line
+<leader>ss  Store selected lines as a snippet, select name and location.
+
+Insert mode~
+            There are currently no mappings for insert mode predefined.
+
+==============================================================================
+2. Installation                                  *snippet-installation*
+
+Using PATHOGEN~
+{Pathogen}  https://github.com/tpope/vim-pathogen 
+
+    cd ~/.vim/bundle
+    git clone https://github.com/honzatomek/vim-snippet
+>
+
+==============================================================================
+3. Setup                                         *snippet-setup*
 
 
 
+==============================================================================
+4. Usage                                         *snippet-usage*
 
-vim:ft=help:et:ts=2:sw=2:sts=2:norl
+==============================================================================
+vim:ft=help:textwidth=78:softtabstop=4:expandtab:shiftwidth=4:norl
