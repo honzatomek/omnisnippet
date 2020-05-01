@@ -1,0 +1,39 @@
+*snippet.vim* Vim Plugin to store and insert Code and Text Snippets
+*snippet* *Snippet* *'snippet'* *'Snippet'* *tomek* *Tomek*
+=============================================================================
+                                                                            ~
+       ee   e e  eeeeeee      eeeee eeeee e  eeeee eeeee eeee eeeee         ~
+       88   8 8  8  8  8      8   " 8   8 8  8   8 8   8 8      8           ~
+       88  e8 8e 8e 8  8 eeee 8eeee 8e  8 8e 8eee8 8eee8 8eee   8e          ~
+        8  8  88 88 8  8         88 88  8 88 88    88    88     88          ~
+        8ee8  88 88 8  8      8ee88 88  8 88 88    88    88ee   88          ~
+                                                                            ~
+
+  Plugin:  snippet.vim
+  Author:  Jan Tomek <rpi3.tomek@protonmail.com>
+  Date:    25.04.2020
+  Version: 0.1.0
+
+  TODO:  1) Snippets preview: tags file? ->
+            snippet_name{TAB}filename{TAB}location
+            possible solution: when storing add a new tag to
+            filetype.tags, then preview tags in quickfix window and map
+            enter up/down movement (ctrl-n/ctrl-p) to automatically view
+            the snippet in preview window
+         2) tests of all functions and externalised global settings
+         3) print messages only in verbose mode
+         4) maybe easier editing of the snippet? overwrite values to be
+            set as {{value}} and then using tab or ctrl-n ctrl-p rotate
+            over them to overwrite them immediately?
+         5) buffer-local variable of snippet path - what if filetype
+            changed in the same buffer? test it
+         6) fix arrows movement in completion list
+            maybe map left-right arrows to complete the selected snippet
+            and preview it in preview window?
+
+==============================================================================
+
+
+
+
+vim:ft=help:et:ts=2:sw=2:sts=2:norl
