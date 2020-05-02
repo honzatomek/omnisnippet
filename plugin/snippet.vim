@@ -1,18 +1,18 @@
 " snippet.vim - Vim plugin file for vim-snippet
-"############################################################################"
-"                                                                            "
-"        ee   e e  eeeeeee      eeeee eeeee e  eeeee eeeee eeee eeeee        "
-"        88   8 8  8  8  8      8   " 8   8 8  8   8 8   8 8      8          "
-"        88  e8 8e 8e 8  8 eeee 8eeee 8e  8 8e 8eee8 8eee8 8eee   8e         "
-"         8  8  88 88 8  8         88 88  8 88 88    88    88     88         "
-"         8ee8  88 88 8  8      8ee88 88  8 88 88    88    88ee   88         "
-"                                                                            "
-" Plugin:  snippet.vim                                                       "
-" Author:  Jan Tomek <rpi3.tomek@protonmail.com>                             "
-" Date:    25.04.2020                                                        "
-" Version: 0.1.0                                                             "
-"                                                                            "
-"############################################################################"
+"#############################################################################
+"
+"        ee   e e  eeeeeee      eeeee eeeee e  eeeee eeeee eeee eeeee
+"        88   8 8  8  8  8      8   " 8   8 8  8   8 8   8 8      8
+"        88  e8 8e 8e 8  8 eeee 8eeee 8e  8 8e 8eee8 8eee8 8eee   8e
+"         8  8  88 88 8  8         88 88  8 88 88    88    88     88
+"         8ee8  88 88 8  8      8ee88 88  8 88 88    88    88ee   88
+"
+" Plugin:  snippet.vim
+" Author:  Jan Tomek <rpi3.tomek@protonmail.com>
+" Date:    25.04.2020
+" Version: 0.1.0
+"
+"#############################################################################
 
 " load plugin only once ================================================= {{{1
 if exists("g:snippet_plugin_loaded")
