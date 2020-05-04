@@ -88,11 +88,11 @@ endfunction
 " <plug>Snippet_InsertSnippetNormal
 call <SID>Snippet_SetEntryMapping('n', 'Snippet_InsertSnippetNormal', 'snippet#Insert("n")', '<leader>si') "Snippet Insert
 " <plug>Snippet_InsertSnippetVisual
-call <SID>Snippet_SetEntryMapping('v', 'Snippet_InsertSnippetVisual', 'snippet#Insert("v")', '<leader>si') "Snippet Insert
+call <SID>Snippet_SetEntryMapping('v', 'Snippet_InsertSnippetVisual', 'snippet#Insert("v")', '<leader>si') "Snippet Insert Visual Line
 " <plug>Snippet_StoreSnippetNormal
 call <SID>Snippet_SetEntryMapping('n', 'Snippet_StoreSnippetNormal', 'snippet#Store("n")', '<leader>ss') "Snippet Store
 " <plug>Snippet_StoreSnippetVisual
-call <SID>Snippet_SetEntryMapping('v', 'Snippet_StoreSnippetVisual', 'snippet#Store("v")', '<leader>ss') "Snippet Store
+call <SID>Snippet_SetEntryMapping('v', 'Snippet_StoreSnippetVisual', 'snippet#Store("v")', '<leader>ss') "Snippet Store Visual Line
 
 " Default key mappings for Completion Popup Utilization
 if !exists("g:snippet_NextAndComplete") | let g:snippet_NextAndComplete = ['<c-n>', '<c-s-j>'] | endif
