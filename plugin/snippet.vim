@@ -21,54 +21,76 @@ endif
 
 " set verbose mode and print function =================================== {{{1
 if !exists("g:snippet_verbose_mode")
-  let g:snippet_verbose_mode = 2
+  let g:snippet_verbose_mode = 0
 endif
 
-function! s:PrintMsg(message)
+let g:snippet_tag_mark = {'o': '[+] ', 'e': '[x] ', 'i': '[i] ', 'q': '[?] ', 'w': '[-] ',}
+let g:snippet_tag_name = 'VIM-Snippet: '
+function! s:PrintMsg(message, tag)
+  if !exists("g:snippet_tag_name")
+    let l:tag_name = "VIM-Snippet: "
+  else
+    let l:tag_name = g:snippet_tag_name
+  endif
+  if get(g:snippet_tag_mark, a:tag, '') == ''
+    let l:tag_mark = '[i] '
+  else
+    let l:tag_mark = get(g:snippet_tag_mark, a:tag, '')
+  endif
+  let l:message = l:tag_mark . l:tag_name . a:message
+
   if g:snippet_verbose_mode == 1
-    echom a:message
+    if a:tag ==? 'o'
+      echohl StatusLine
+    elseif a:tag ==? 'e'
+      echohl ErrorMsg
+    elseif a:tag ==? 'i'
+      echohl Normal
+    elseif a:tag ==? 'q'
+      echohl Question
+    elseif a:tag ==? 'w'
+      echohl WarningMsg
+    else
+      echohl None
+    endif
+    echom l:message
+    echohl None
   elseif g:snippet_verbose_mode == 2
     if !exists("g:snippet_message_buffer")
-      let g:snippet_message_buffer = [a:message]
+      let g:snippet_message_buffer = [[a:message, a:tag]]
     else
-      silent! call extend(g:snippet_message_buffer, [a:message])
+      silent! call add(g:snippet_message_buffer,  [a:message, a:tag])
     endif
   endif
 endfunction
 
 " set plugin location =================================================== {{{1
-if !exists("g:snippet_plugin_location")
-  let g:snippet_plugin_location = fnamemodify(resolve(expand("<sfile>:p")), ":h:h")
-  call <SID>PrintMsg("[+] Snippet: plugin location set to '" . g:snippet_plugin_location . "'")
+if !exists("g:snippet_root")
+  let g:snippet_root = fnamemodify(resolve(expand("<sfile>:p")), ":h:h")
+  call <SID>PrintMsg("plugin location set to '" . g:snippet_root . "'", 'i')
 else
-  let g:snippet_plugin_location = substitute(g:snippet_plugin_location, "/$", "", "")
-  call <SID>PrintMsg("[+] Snippet: plugin custom location set to '" . g:snippet_plugin_location . "'")
+  let g:snippet_root = substitute(g:snippet_root, "/$", "", "")
+  call <SID>PrintMsg("plugin custom location set to '" . g:snippet_root . "'", 'i')
 endif
 
 " set snippets location ================================================= {{{1
-if !exists("g:snippet_snippets_location")
-  let g:snippet_snippets_location = g:snippet_plugin_location . "/snippets"
-  call <SID>PrintMsg("[+] Snippet: snippet location set to '" . g:snippet_snippets_location . "'")
+if !exists("g:snippet_directory")
+  let g:snippet_directory = g:snippet_root . "/snippets"
+  call <SID>PrintMsg("snippet location set to '" . g:snippet_directory . "'", 'i')
 else
-  let g:snippet_snippets_location = substitute(g:snippet_snippets_location, "/$", "", "")
-  call <SID>PrintMsg("[+] Snippet: snippet custom location set to '" . g:snippet_snippets_location . "'")
+  let g:snippet_directory = substitute(g:snippet_directory, "/$", "", "")
+  call <SID>PrintMsg("snippet custom location set to '" . g:snippet_directory . "'", 'i')
 endif
 
 " set filetype specific snippet location ================================ {{{1
 function! s:Snippet_SetFiletypeSpecifics(filetype)
-  call <SID>PrintMsg("[+] Snippet: Filetype " . a:filetype)
-  if !exists("g:snippet_snippets_" . a:filetype)
-    execute "let g:snippet_snippets_" . a:filetype . " =  g:snippet_snippets_location . \"/" . a:filetype . "\""
-    execute "call <SID>PrintMsg(\"[+] Snippet: " . a:filetype . " snippets location set to '\" . g:snippet_snippets_" . a:filetype . " . \"'\")"
+  call <SID>PrintMsg("Filetype " . a:filetype, 'i')
+  if !exists("g:snippet_" . a:filetype)
+    execute "let g:snippet_" . a:filetype . " =  g:snippet_directory . \"/" . a:filetype . "\""
+    execute "call <SID>PrintMsg(\"" . a:filetype . " snippets location set to '\" . g:snippet_" . a:filetype . " . \"'\", 'i')"
   else
-    execute "let g:snippet_snippets_" . a:filetype . " = substitute(g:snippet_snippets_" . a:filetype . ", \"/$\", \"\", \"\")"
-    execute "call <SID>PrintMsg(\"[+] Snippet: " . a:filetype . " snippets custom location set to '\" . g:snippet_snippets_" . a:filetype . " . \"'\")"
-  endif
-  if g:snippet_verbose_mode == 2
-    for l:mes in g:snippet_message_buffer
-      echom l:mes
-    endfor
-    unlet g:snippet_message_buffer
+    execute "let g:snippet_" . a:filetype . " = substitute(g:snippet_" . a:filetype . ", \"/$\", \"\", \"\")"
+    execute "call <SID>PrintMsg(\"" . a:filetype . " snippets custom location set to '\" . g:snippet_" . a:filetype . " . \"'\", 'i')"
   endif
 endfunction
 
@@ -80,19 +102,21 @@ augroup END
 " set plugin keymaps ==================================================== {{{1
 function! s:Snippet_SetEntryMapping(mode, name, function, keys)
   execute a:mode . 'noremap <silent> <plug>' . a:name . ' :call ' . a:function . '<cr>'
+  call <SID>PrintMsg("(" . a:mode . ") " . a:function . " mapped to <plug>" . a:name, 'i')
   if !hasmapto('<plug>' . a:name, a:mode) && (mapcheck(a:keys, a:mode) == "")
     execute a:mode . 'map <silent> ' . a:keys . ' <plug>' . a:name
+    call <SID>PrintMsg("(" . a:mode . ") <plug>" . a:name . " mapped to " . a:keys, 'i')
   endif
 endfunction
 
 " <plug>Snippet_InsertSnippetNormal
-call <SID>Snippet_SetEntryMapping('n', 'Snippet_InsertSnippetNormal', 'snippet#Insert("n")', '<leader>si') "Snippet Insert
+call <SID>Snippet_SetEntryMapping('n', 'Snippet_InsertNormal', 'snippet#Insert("n")', '<leader>is') "Snippet Insert
 " <plug>Snippet_InsertSnippetVisual
-call <SID>Snippet_SetEntryMapping('v', 'Snippet_InsertSnippetVisual', 'snippet#Insert("v")', '<leader>si') "Snippet Insert Visual Line
+call <SID>Snippet_SetEntryMapping('v', 'Snippet_InsertVisual', 'snippet#Insert("v")', '<leader>is') "Snippet Insert Visual Line
 " <plug>Snippet_StoreSnippetNormal
-call <SID>Snippet_SetEntryMapping('n', 'Snippet_StoreSnippetNormal', 'snippet#Store("n")', '<leader>ss') "Snippet Store
+call <SID>Snippet_SetEntryMapping('n', 'Snippet_StoreNormal', 'snippet#Store("n")', '<leader>ss') "Snippet Store
 " <plug>Snippet_StoreSnippetVisual
-call <SID>Snippet_SetEntryMapping('v', 'Snippet_StoreSnippetVisual', 'snippet#Store("v")', '<leader>ss') "Snippet Store Visual Line
+call <SID>Snippet_SetEntryMapping('v', 'Snippet_StoreVisual', 'snippet#Store("v")', '<leader>ss') "Snippet Store Visual Line
 
 " Default key mappings for Completion Popup Utilization
 if !exists("g:snippet_NextAndComplete") | let g:snippet_NextAndComplete = ['<c-n>', '<c-s-j>'] | endif
@@ -106,5 +130,15 @@ if !exists("g:snippet_Complete") | let g:snippet_Complete = ['<cr>', '<kenter>',
 
 " }}}
 
+if g:snippet_verbose_mode == 2 && exists("g:snippet_message_buffer")
+  if len(g:snippet_message_buffer) > 0
+    let g:snippet_verbose_mode = 1
+    for [message, tag_name] in g:snippet_message_buffer
+      call <SID>PrintMsg(message, 'o')
+    endfor
+    let g:snippet_verbose_mode = 2
+    unlet g:snippet_message_buffer
+  endif
+endif
 let g:snippet_plugin_loaded = 1
 " vim:fdm=marker:ft=vim
