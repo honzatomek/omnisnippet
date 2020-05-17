@@ -1,0 +1,4 @@
+# * linguist-vendored
+# *.vim linguist-vendored=false
+* linguist-detectable=false
+*.vim linguist-detectable=true
